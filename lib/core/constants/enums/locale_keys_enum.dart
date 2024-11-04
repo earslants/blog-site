@@ -1,0 +1,4 @@
+enum PreferencesKeys {
+  EMAIL,
+  PASSWORD,
+}
