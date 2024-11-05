@@ -28,4 +28,13 @@ class HomeViewModel extends BaseViewModel with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  bool appBarResponsive() {
+    var width = MediaQuery.of(myContext).size.width;
+    if (width < 700) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

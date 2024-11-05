@@ -8,6 +8,6 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
   double dynamicWidth(double value) =>
       MediaQuery.of(context).size.width * value;
 
-  EdgeInsets dynamicPadding() =>
-      const EdgeInsets.symmetric(vertical: 15, horizontal: 20);
+  EdgeInsets dynamicPadding(double v, double h) =>
+      EdgeInsets.symmetric(vertical: v, horizontal: h);
 }
