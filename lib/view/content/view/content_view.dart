@@ -1,16 +1,19 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:emirhanarslantascom/core/base/state/base_state.dart';
 import 'package:emirhanarslantascom/core/components/app/app_logo.dart';
 import 'package:emirhanarslantascom/core/components/app/header_buttons.dart';
 import 'package:emirhanarslantascom/view/content/viewmodel/content_view_model.dart';
+import 'package:emirhanarslantascom/view/home/viewmodel/home_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../core/base/view/base_view.dart';
+import '../../../core/components/app/code_block_builder.dart';
 import '../../../core/constants/app/application_constants.dart';
 
 class ContentView extends StatefulWidget {
   final String id;
-
   const ContentView({super.key, required this.id});
 
   @override
@@ -59,7 +62,7 @@ class _ContentViewState extends BaseState<ContentView> {
               shape: const Border(
                   bottom: BorderSide(color: Colors.black, width: .15)),
               title: Padding(
-                padding: MediaQuery.of(context).size.width < 850
+                padding: MediaQuery.of(context).size.width < 800
                     ? EdgeInsets.symmetric(horizontal: dynamicWidth(.02))
                     : EdgeInsets.symmetric(horizontal: dynamicWidth(.18)),
                 child: const Row(
@@ -73,10 +76,26 @@ class _ContentViewState extends BaseState<ContentView> {
               ),
             ),
             SliverToBoxAdapter(
-              child: Center(
-                child: MediaQuery.of(context).size.width < 800
-                    ? buildContentSmallScreen(viewModel)
-                    : buildContentNormalScreen(viewModel),
+              child: Padding(
+                padding: MediaQuery.of(context).size.width < 720
+                    ? EdgeInsets.symmetric(horizontal: dynamicWidth(.04))
+                    : EdgeInsets.zero,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: 700,
+                      child: Column(
+                        children: [
+                          SizedBox(height: dynamicHeight(.06)),
+                          buildTopInfo(viewModel),
+                          SizedBox(height: dynamicHeight(.06)),
+                          buildMarkdownBody(viewModel),
+                        ],
+                      ),
+                    ),
+                    // buildCarousel(viewModel),
+                  ],
+                ),
               ),
             ),
           ],
@@ -85,31 +104,72 @@ class _ContentViewState extends BaseState<ContentView> {
     );
   }
 
-  Padding buildContentSmallScreen(ContentViewModel viewModel) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: dynamicWidth(.04)),
-      child: Column(
-        children: [
-          SizedBox(height: dynamicHeight(.06)),
-          buildTopInfo(viewModel),
-          SizedBox(height: dynamicHeight(.06)),
-          buildMarkdownBody(viewModel),
-        ],
-      ),
-    );
-  }
-
-  SizedBox buildContentNormalScreen(ContentViewModel viewModel) {
-    return SizedBox(
-      width: 750,
-      child: Column(
-        children: [
-          SizedBox(height: dynamicHeight(.06)),
-          buildTopInfo(viewModel),
-          SizedBox(height: dynamicHeight(.06)),
-          buildMarkdownBody(viewModel),
-        ],
-      ),
+  Column buildCarousel(ContentViewModel viewModel) {
+    return Column(
+      children: [
+        SizedBox(height: dynamicHeight(.06)),
+        const Text(
+          "Diğer Yazılar",
+          style: TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: 22,
+          ),
+        ),
+        SizedBox(height: dynamicHeight(.02)),
+        SizedBox(
+          width: 700,
+          child: Divider(color: Colors.grey.shade300, thickness: .6),
+        ),
+        SizedBox(
+          height: 400,
+          width: 700,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Consumer<HomeViewModel>(builder: (context, model, child) {
+                return CarouselSlider(
+                  carouselController: viewModel.sliderController,
+                  options: CarouselOptions(
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    height: 200.0,
+                    viewportFraction: 0.5,
+                  ),
+                  items: model.allContents?.map((i) {
+                    return Container(
+                      width: 350,
+                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                      decoration: const BoxDecoration(
+                        color: Colors.amber,
+                      ),
+                      child: const Text(
+                        'text',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    );
+                  }).toList(),
+                );
+              }),
+              Positioned(
+                left: 0,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios,
+                      color: Colors.white, size: 30),
+                  onPressed: () => viewModel.sliderController.previousPage(),
+                ),
+              ),
+              Positioned(
+                right: 0,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios,
+                      color: Colors.white, size: 30),
+                  onPressed: () => viewModel.sliderController.nextPage(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -122,10 +182,14 @@ class _ContentViewState extends BaseState<ContentView> {
       },
       styleSheet: MarkdownStyleSheet(
         blockSpacing: 24,
+        h1Padding: const EdgeInsets.only(bottom: 24),
+        h2Padding: const EdgeInsets.symmetric(vertical: 12),
         p: const TextStyle(fontSize: 18),
-        h1: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
-        h2: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        a: const TextStyle(fontSize: 18, color: Colors.blue),
+        h1: GoogleFonts.rowdies(fontSize: 32, fontWeight: FontWeight.w900),
+        h2: GoogleFonts.rowdies(fontSize: 20, fontWeight: FontWeight.w800),
+        a: const TextStyle(
+            fontSize: 18, color: Color.fromARGB(255, 20, 20, 20)),
+        listBullet: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         code: const TextStyle(fontSize: 16, fontFamily: 'monospace'),
       ),
     );
@@ -152,33 +216,6 @@ class _ContentViewState extends BaseState<ContentView> {
             color: Colors.grey.shade400,
           ),
           overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    );
-  }
-}
-
-class CodeBlockBuilder extends MarkdownElementBuilder {
-  @override
-  Widget visitElementAfter(element, TextStyle? preferredStyle) {
-    return Stack(
-      alignment: Alignment.topRight,
-      children: [
-        Container(
-          height: 200,
-          width: double.infinity,
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.grey[200],
-          child: Text(
-            element.textContent,
-            style: const TextStyle(fontFamily: 'monospace'),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.copy, size: 16),
-          onPressed: () {
-            Clipboard.setData(ClipboardData(text: element.textContent));
-          },
         ),
       ],
     );

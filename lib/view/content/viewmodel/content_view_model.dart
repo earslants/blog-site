@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:emirhanarslantascom/core/constants/enums/network_route.dart';
 import 'package:emirhanarslantascom/view/content/model/content_model.dart';
 import 'package:emirhanarslantascom/view/content/service/IContentService.dart';
@@ -9,6 +10,7 @@ import '../../../core/base/viewmodel/base_view_model.dart';
 class ContentViewModel extends BaseViewModel with ChangeNotifier {
   Content? content;
   IContentService? contentService;
+  final CarouselSliderController sliderController = CarouselSliderController();
 
   @override
   void init() {

@@ -39,19 +39,20 @@ class _HomeViewState extends BaseState<HomeView> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: dynamicPadding(dynamicHeight(.08), dynamicWidth(.04)),
+            padding: dynamicPadding(dynamicHeight(.08), dynamicWidth(.18)),
             child: GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: viewModel.allContents?.length,
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 700,
+                maxCrossAxisExtent: 450,
                 crossAxisSpacing: dynamicWidth(.025),
                 mainAxisSpacing: dynamicHeight(.04),
               ),
               itemBuilder: (context, i) {
                 return Container(
                   decoration: BoxDecoration(
+                    color: const Color(0xFFF7F7F7),
                     border: Border.all(width: .8, color: Colors.grey.shade400),
                     borderRadius: BorderRadius.circular(24),
                   ),
@@ -67,14 +68,14 @@ class _HomeViewState extends BaseState<HomeView> {
                         Expanded(
                           flex: 6,
                           child: Container(
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(24),
                                 topRight: Radius.circular(24),
                               ),
                               image: DecorationImage(
                                 image: NetworkImage(
-                                  "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
+                                  viewModel.allContents![i].imageUrl!,
                                 ),
                                 fit: BoxFit.cover,
                               ),
@@ -89,14 +90,16 @@ class _HomeViewState extends BaseState<HomeView> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "${viewModel.allContents?[i].category}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 18,
-                                    color: Colors.grey.shade500,
+                                Flexible(
+                                  child: Text(
+                                    "${viewModel.allContents?[i].category}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 18,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
                                   "${viewModel.allContents?[i].title}",
@@ -108,14 +111,16 @@ class _HomeViewState extends BaseState<HomeView> {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                Text(
-                                  "${ApplicationConstants.MONTHS[viewModel.allContents![i].time!.month - 1]} ${viewModel.allContents?[i].time?.day}, ${viewModel.allContents?[i].time?.year}",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 16,
-                                    color: Colors.grey.shade400,
+                                Flexible(
+                                  child: Text(
+                                    "${ApplicationConstants.MONTHS[viewModel.allContents![i].time!.month - 1]} ${viewModel.allContents?[i].time?.day}, ${viewModel.allContents?[i].time?.year}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16,
+                                      color: Colors.grey.shade400,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
