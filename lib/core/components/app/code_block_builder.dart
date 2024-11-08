@@ -7,6 +7,36 @@ import 'package:flutter_highlight/themes/atom-one-light.dart';
 class CodeBlockBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfter(element, TextStyle? preferredStyle) {
+    return CodeBlockWidget(code: element.textContent);
+  }
+}
+
+class CodeBlockWidget extends StatefulWidget {
+  final String code;
+
+  const CodeBlockWidget({super.key, required this.code});
+
+  @override
+  _CodeBlockWidgetState createState() => _CodeBlockWidgetState();
+}
+
+class _CodeBlockWidgetState extends State<CodeBlockWidget> {
+  bool _isCopied = false;
+
+  void _copyToClipboard() {
+    Clipboard.setData(ClipboardData(text: widget.code));
+    setState(() {
+      _isCopied = true;
+    });
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        _isCopied = false;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.topRight,
       children: [
@@ -18,17 +48,32 @@ class CodeBlockBuilder extends MarkdownElementBuilder {
             borderRadius: BorderRadius.circular(12),
           ),
           child: HighlightView(
-            element.textContent,
-            language: 'dart', // Dil ismini burada belirtin
+            widget.code,
+            language: 'dart',
             theme: atomOneLightTheme,
             textStyle: const TextStyle(fontFamily: 'monospace', fontSize: 16),
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.copy, size: 16),
-          onPressed: () {
-            Clipboard.setData(ClipboardData(text: element.textContent));
-          },
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_isCopied)
+              const Padding(
+                padding: EdgeInsets.only(right: 4.0),
+                child: Text(
+                  'Panoya Kopyalandı',
+                  style: TextStyle(fontSize: 12, color: Colors.green),
+                ),
+              ),
+            IconButton(
+              icon: Icon(
+                _isCopied ? Icons.check : Icons.copy,
+                size: 16,
+                color: _isCopied ? Colors.green : null,
+              ),
+              onPressed: _copyToClipboard,
+            ),
+          ],
         ),
       ],
     );
